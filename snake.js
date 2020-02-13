@@ -17,8 +17,8 @@ ground.src = "img/ground.png";
 const foodImg = new Image();
 foodImg.src = "img/food.png";
 
-const virusImg = new Image();
-virusImg.src = "img/fire32.png";
+const fireImg = new Image();
+fireImg.src = "img/fire32.png";
 
 // load audio files
 
@@ -52,7 +52,7 @@ let food = {
     y : Math.floor(Math.random()*15+3) * box
 }
 
-let virus = {
+let fire = {
     x : Math.floor(Math.random()*17+1) * box,
     y : Math.floor(Math.random()*15+3) * box
 }
@@ -109,7 +109,7 @@ function draw(){
     }
     
     ctx.drawImage(foodImg, food.x, food.y);
-    ctx.drawImage(virusImg, virus.x, virus.y);
+    ctx.drawImage(fireImg, fire.x, fire.y);
     
     // old head position
     let snakeX = snake[0].x;
@@ -121,7 +121,7 @@ function draw(){
     if( d == "RIGHT") snakeX += box;
     if( d == "DOWN") snakeY += box;
 
-    let eatenVirus = false;
+    let eatFire = false;
     
     // if the snake eats the food
     if(snakeX == food.x && snakeY == food.y){
@@ -131,14 +131,14 @@ function draw(){
             x : Math.floor(Math.random()*17+1) * box,
             y : Math.floor(Math.random()*15+3) * box
         }
-        // if the snake eats the virus
-    } else if (snakeX == virus.x && snakeY == virus.y) {
+        // if the snake eats the fire
+    } else if (snakeX == fire.x && snakeY == fire.y) {
         score--;
-        virus = {
+        fire = {
             x : Math.floor(Math.random()*17+1) * box,
             y : Math.floor(Math.random()*15+3) * box
         }
-        eatenVirus = true;
+        eatFire = true;
     } else {
         // remove the tail
         snake.pop();
@@ -157,7 +157,7 @@ function draw(){
         clearInterval(game);
         dead.play();
     }
-    if (!eatenVirus) {
+    if (!eatFire) {
         snake.unshift(newHead);
     }
 
@@ -165,7 +165,7 @@ function draw(){
     ctx.font = "45px Changa one";
     ctx.fillText(score,2*box,1.6*box);
 
-    if (eatenVirus) {
+    if (eatFire) {
         if (snake.length <= 1) {
             clearInterval(game);
             dead.play();
