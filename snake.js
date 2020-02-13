@@ -17,6 +17,9 @@ ground.src = "img/ground.png";
 const foodImg = new Image();
 foodImg.src = "img/food.png";
 
+const virusImg = new Image();
+virusImg.src = "img/fire32.png";
+
 // load audio files
 
 let dead = new Audio();
@@ -49,6 +52,11 @@ let food = {
     y : Math.floor(Math.random()*15+3) * box
 }
 
+let virus = {
+    x : Math.floor(Math.random()*17+1) * box,
+    y : Math.floor(Math.random()*15+3) * box
+}
+
 // create the score var
 
 let score = 0;
@@ -61,16 +69,16 @@ document.addEventListener("keydown",direction);
 
 function direction(event){
     let key = event.keyCode;
-    if( key == 37 && d != "RIGHT"){
+    if( key == 65 && d != "RIGHT"){
         left.play();
         d = "LEFT";
-    }else if(key == 38 && d != "DOWN"){
+    }else if(key == 87 && d != "DOWN"){
         d = "UP";
         up.play();
-    }else if(key == 39 && d != "LEFT"){
+    }else if(key == 68 && d != "LEFT"){
         d = "RIGHT";
         right.play();
-    }else if(key == 40 && d != "UP"){
+    }else if(key == 83 && d != "UP"){
         d = "DOWN";
         down.play();
     }
@@ -101,6 +109,7 @@ function draw(){
     }
     
     ctx.drawImage(foodImg, food.x, food.y);
+    ctx.drawImage(virusImg, virus.x, virus.y);
     
     // old head position
     let snakeX = snake[0].x;
@@ -111,6 +120,8 @@ function draw(){
     if( d == "UP") snakeY -= box;
     if( d == "RIGHT") snakeX += box;
     if( d == "DOWN") snakeY += box;
+
+    let eatenVirus = false;
     
     // if the snake eats the food
     if(snakeX == food.x && snakeY == food.y){
@@ -120,8 +131,15 @@ function draw(){
             x : Math.floor(Math.random()*17+1) * box,
             y : Math.floor(Math.random()*15+3) * box
         }
-        // we don't remove the tail
-    }else{
+        // if the snake eats the virus
+    } else if (snakeX == virus.x && snakeY == virus.y) {
+        score--;
+        virus = {
+            x : Math.floor(Math.random()*17+1) * box,
+            y : Math.floor(Math.random()*15+3) * box
+        }
+        eatenVirus = true;
+    } else {
         // remove the tail
         snake.pop();
     }
@@ -139,17 +157,26 @@ function draw(){
         clearInterval(game);
         dead.play();
     }
-    
-    snake.unshift(newHead);
-    
+    if (!eatenVirus) {
+        snake.unshift(newHead);
+    }
+
     ctx.fillStyle = "white";
     ctx.font = "45px Changa one";
     ctx.fillText(score,2*box,1.6*box);
+
+    if (eatenVirus) {
+        if (snake.length <= 1) {
+            clearInterval(game);
+            dead.play();
+        }
+        snake.pop();
+    }
 }
 
 // call draw function every 100 ms
 
-let game = setInterval(draw,100);
+let game = setInterval(draw,200);
 
 
 
